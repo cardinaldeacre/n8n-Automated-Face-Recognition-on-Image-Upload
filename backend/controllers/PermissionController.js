@@ -5,7 +5,7 @@ const { authorizeRole, authMiddleware } = require('../middleware/auth');
 
 router.get('/my-history', authMiddleware, authorizeRole('student'), async (req, res) => {
   try {
-    const history = await PermissionService.getActivePermission(req.user.id);
+    const history = await PermissionService.getByUser(req.user.id);
     return res.status(200).json(history);
   } catch (error) {
     console.error(error);
@@ -78,7 +78,7 @@ router.delete('/:id', async (req, res) => {
       return res.status(400).json({ message: 'ID item tidak valid' });
     }
 
-    const deletedCount = await Service.delete(itemId);
+    const deletedCount = await PermissionService.delete(itemId);
 
     if (deletedCount === 0) {
       return res.status(404).json({ message: 'Item tidak ditemukan' });
