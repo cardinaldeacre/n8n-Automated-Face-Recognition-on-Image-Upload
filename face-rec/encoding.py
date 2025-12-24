@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import psycopg2
 import mtcnn
+import json
 from keras.models import load_model
 from utils import get_face, normalize, l2_normalizer
 
@@ -12,9 +13,9 @@ REQUIRED_SIZE = (160, 160)
 
 DB_CONFIG = {
     "host": "localhost",
-    "database": "face_db",
-    "user": "face_user",
-    "password": "face123",
+    "database": "face_recognition",
+    "user": "postgres",
+    "password": "",
     "port": 5432
 }
 
@@ -68,17 +69,27 @@ for nim in os.listdir(PEOPLE_DIR):
 
     encoding_dict[nim] = vector
 
+print("\nMenyimpan ke database...")
 for nim, vector in encoding_dict.items():
-    cursor.execute(
-        """
-        INSERT INTO face_encodings (nim, embedding)
-        VALUES (%s, %s)
-        ON CONFLICT (nim)
-        DO UPDATE SET embedding = EXCLUDED.embedding;
-        """,
-        (nim, vector.tolist())
-    )
+    try:
+        embedding_json = json.dumps(vector.tolist())
 
+        cursor.execute(
+            """
+            UPDATE users 
+            SET face_embedding = %s 
+            WHERE nim = %s;
+            """,
+            (embedding_json, nim)
+        )
+        
+        if cursor.rowcount == 0:
+            print(f"Peringatan: NIM {nim} tidak ditemukan di tabel users. Pastikan user sudah terdaftar.")
+        else:
+            print(f"Sukses update embedding untuk NIM: {nim}")
+            
+    except Exception as e:
+        print(f"Gagal menyimpan untuk NIM {nim}: {e}")
 conn.commit()
 cursor.close()
 conn.close()
