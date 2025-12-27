@@ -1,23 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { EventItem } from '../types/types';
-import EventList from './EventList';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import EventList from './EventList';
+
+import type { DashboardOutletContext } from './DashboardLayout';
 import {
   getAllPermissionsAdmin,
   updatePermissionStatus,
-  type Permissions,
 } from '../services/permission';
+import type { Permissions } from '../services/permission';
 import { logout } from '../services/auth';
 
 // permission management
 
-interface Props {
-  events: EventItem[];
-  setEvents: React.Dispatch<React.SetStateAction<EventItem[]>>;
-}
+export default function AdminDashboard() {
+  const { events, setEvents } = useOutletContext<DashboardOutletContext>();
 
-export default function AdminDashboard({ events, setEvents }: Props) {
   const [permissions, setPermissions] = useState<Permissions[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -103,18 +101,20 @@ export default function AdminDashboard({ events, setEvents }: Props) {
                   <td>{new Date(app.start_time).toLocaleString()}</td>
                   <td>{app.reason}</td>
                   <td>
-                    <button
-                      className="action-btn"
-                      onClick={() => onApprove(app.id)}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      className="action-btn"
-                      onClick={() => onDeny(app.id)}
-                    >
-                      Deny
-                    </button>
+                    <div className="action-buttons">
+                      <button
+                        className="action-btn"
+                        onClick={() => onApprove(app.id)}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="action-btn action-btn--deny"
+                        onClick={() => onDeny(app.id)}
+                      >
+                        Deny
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

@@ -7,6 +7,7 @@ export interface Permissions {
   id: number;
   user_id: number;
   reason: string;
+  duration: number | null;
   start_time: string;
   end_time: string;
   status: PermissionStatus;
@@ -14,6 +15,23 @@ export interface Permissions {
   student_name?: string;
   student_nim?: string;
 }
+
+export async function getMyPermissionHistory(): Promise<Permissions[]> {
+  const res = await api.get<Permissions[]>('/api/permission/my-history');
+  return res.data;
+}
+
+export async function requestPermission(payload: {
+  reason: string;
+  start_time: string;
+  end_time: string;
+  duration?: number;
+}) {
+  const res = await api.post('/api/permission/request', payload);
+  return res.data;
+}
+
+// admin
 
 export async function getAllPermissionsAdmin(): Promise<Permissions[]> {
   const res = await api.get<Permissions[]>('/api/permission/admin/all');

@@ -16,7 +16,15 @@ export default function Login() {
     try {
       const res = await login(username, password);
       localStorage.setItem('accessToken', res.accessToken);
-      navigate('/dashboard');
+
+      const role = (res.role ?? res.user?.role) as
+        | 'admin'
+        | 'student'
+        | undefined;
+      if (role) localStorage.setItem('role', role);
+
+      if (role === 'admin') navigate('/dashboard/admin', { replace: true });
+      else navigate('/dashboard/student', { replace: true });
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

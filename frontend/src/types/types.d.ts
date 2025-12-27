@@ -1,7 +1,9 @@
 export interface Application {
   id: number;
-  student: string;
-  date: string;
+  student_name: string;
+  // date: string;
+  start_time: string;
+  end_time: string;
   purpose: string;
   destination?: string;
   status: 'approve' | 'waiting';
