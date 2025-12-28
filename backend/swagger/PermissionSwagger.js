@@ -1,30 +1,84 @@
 /**
  * @swagger
- * tags:
- *   - name: Permissions
- *     description: Manajemen perizinan keluar kampus
+ * components:
+ *   schemas:
+ *     Permission:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         user_id:
+ *           type: integer
+ *           example: 10
+ *         nama:
+ *           type: string
+ *           description: Nama siswa (biasanya muncul jika di-join dengan tabel users)
+ *           example: "ahmad mukhlis farhan"
+ *         reason:
+ *           type: string
+ *           example: "Urusan keluarga"
+ *         start_time:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-12-30T08:00:00Z"
+ *         end_time:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-12-31T20:00:00Z"
+ *         status:
+ *           type: string
+ *           enum: [pending, accepted, denied]
+ *           example: "pending"
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-12-28T10:00:00Z"
  */
 
 /**
  * @swagger
  * /api/permission/my-history:
  *   get:
- *     summary: Mendapatkan riwayat izin siswa yang sedang login
+ *     summary: Mendapatkan riwayat izin siswa (Student Only)
  *     tags: [Permissions]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Daftar riwayat izin berhasil diambil
- *       401:
- *         description: Tidak terautentikasi
+ *         description: Berhasil mengambil daftar riwayat izin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Permission'
+ */
+
+/**
+ * @swagger
+ * /api/permission/admin/all:
+ *   get:
+ *     summary: Melihat semua daftar pengajuan izin (Admin Only)
+ *     tags: [Permissions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Berhasil mengambil semua daftar izin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Permission'
  */
 
 /**
  * @swagger
  * /api/permission/request:
  *   post:
- *     summary: Siswa mengajukan perizinan baru
+ *     summary: Mengajukan izin baru (Student Only)
  *     tags: [Permissions]
  *     security:
  *       - bearerAuth: []
@@ -41,83 +95,22 @@
  *             properties:
  *               reason:
  *                 type: string
- *                 example: "Urusan keluarga mendesak"
  *               start_time:
  *                 type: string
  *                 format: date-time
- *                 example: "2023-12-25T13:00:00Z"
  *               end_time:
  *                 type: string
  *                 format: date-time
- *                 example: "2023-12-25T17:00:00Z"
  *     responses:
  *       201:
- *         description: Permintaan berhasil dibuat
- *       400:
- *         description: Input tidak valid (waktu salah atau kolom kosong)
- */
-
-/**
- * @swagger
- * /api/permission/admin/all:
- *   get:
- *     summary: Admin melihat semua pengajuan izin (Admin Only)
- *     tags: [Permissions]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Daftar semua izin berhasil diambil
- */
-
-/**
- * @swagger
- * /api/permission/admin/status/{id}:
- *   patch:
- *     summary: Admin menyetujui atau menolak izin (Admin Only)
- *     tags: [Permissions]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               status:
- *                 type: string
- *                 enum: [accepted, denied]
- *     responses:
- *       200:
- *         description: Status berhasil diperbarui
- *       404:
- *         description: ID izin tidak ditemukan
- */
-
-/**
- * @swagger
- * /api/permission/{id}:
- *   delete:
- *     summary: Menghapus data perizinan
- *     tags: [Permissions]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Data berhasil dihapus
- *       404:
- *         description: Data tidak ditemukan
+ *         description: Permintaan izin berhasil dibuat
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 permission:
+ *                   $ref: '#/components/schemas/Permission'
  */

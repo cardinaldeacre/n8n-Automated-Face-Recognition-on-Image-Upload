@@ -1,5 +1,34 @@
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         nama:
+ *           type: string
+ *         nime:
+ *           type: string
+ *         role:
+ *           type: string
+ *           enum: [admin, student]
+ *       example:
+ *         id: 1
+ *         nama: Super Admin
+ *         nim: admin01
+ *         role: student
+ */
+
+/**
+ * @swagger
  * tags:
  *   - name: Users
  *     description: Manajemen pengguna dan autentikasi
