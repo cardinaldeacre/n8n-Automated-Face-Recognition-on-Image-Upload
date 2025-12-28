@@ -1,39 +1,76 @@
-import type { Application, EventItem } from '../types/types';
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useEffect, useState } from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import EventList from './EventList';
-import { useNavigate } from 'react-router-dom';
 
+import type { DashboardOutletContext } from './DashboardLayout';
+import {
+  getAllPermissionsAdmin,
+  updatePermissionStatus,
+} from '../services/permission';
+import type { Permissions } from '../services/permission';
+import { logout } from '../services/auth';
 
-interface Props {
-  applications: Application[];
-  approve: (id: number) => void;
-  events: EventItem[];
-  setEvents: React.Dispatch<React.SetStateAction<EventItem[]>>;
-}
+// permission management
 
-export default function AdminDashboard({ applications, approve, events, setEvents }: Props) {
+export default function AdminDashboard() {
+  const { events, setEvents } = useOutletContext<DashboardOutletContext>();
 
+  const [permissions, setPermissions] = useState<Permissions[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const waiting = applications.filter((a) => a.status === 'waiting');
 
   const [eventForm, setEventForm] = useState({ name: '', details: '' });
 
   const submitEvent = (e: React.FormEvent) => {
     e.preventDefault();
 
-    setEvents(prev => [...prev, { ...eventForm }]);
+    setEvents((prev) => [...prev, { ...eventForm }]);
     setEventForm({ name: '', details: '' });
 
-    alert("Event published!");
+    alert('Event published!');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  }; 
+  async function load() {
+    setLoading(true);
+    try {
+      const data = await getAllPermissionsAdmin();
+      setPermissions(Array.isArray(data) ? data : []);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function onApprove(id: number) {
+    await updatePermissionStatus(id, 'accepted');
+    await load();
+  }
+
+  async function onDeny(id: number) {
+    await updatePermissionStatus(id, 'denied');
+    await load();
+  }
+
+  async function handleLogout() {
+    await logout();
+    navigate('/login');
+  }
+
+  const waiting = permissions.filter((p) => p.status === 'waiting');
+
   return (
     <div className="content-area active">
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          marginBottom: 16,
+        }}
+      >
         <button onClick={handleLogout} className="logout-btn">
           Logout
         </button>
@@ -58,15 +95,26 @@ export default function AdminDashboard({ applications, approve, events, setEvent
                 </td>
               </tr>
             ) : (
-              waiting.map(app => (
+              waiting.map((app) => (
                 <tr key={app.id}>
-                  <td>{app.student}</td>
-                  <td>{app.date}</td>
-                  <td>{app.purpose}</td>
+                  <td>{app.student_name}</td>
+                  <td>{new Date(app.start_time).toLocaleString()}</td>
+                  <td>{app.reason}</td>
                   <td>
-                    <button className="action-btn" onClick={() => approve(app.id)}>
-                      Approve
-                    </button>
+                    <div className="action-buttons">
+                      <button
+                        className="action-btn"
+                        onClick={() => onApprove(app.id)}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="action-btn action-btn--deny"
+                        onClick={() => onDeny(app.id)}
+                      >
+                        Deny
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -84,7 +132,9 @@ export default function AdminDashboard({ applications, approve, events, setEvent
             <input
               type="text"
               value={eventForm.name}
-              onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
+              onChange={(e) =>
+                setEventForm({ ...eventForm, name: e.target.value })
+              }
               required
             />
           </div>
@@ -93,7 +143,9 @@ export default function AdminDashboard({ applications, approve, events, setEvent
             <label>Details:</label>
             <textarea
               value={eventForm.details}
-              onChange={(e) => setEventForm({ ...eventForm, details: e.target.value })}
+              onChange={(e) =>
+                setEventForm({ ...eventForm, details: e.target.value })
+              }
               required
             />
           </div>

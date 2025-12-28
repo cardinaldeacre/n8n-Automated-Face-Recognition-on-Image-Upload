@@ -12,12 +12,14 @@ const PermissionService = {
       .orderBy('permissions.created_at', 'desc');
   },
 
-  getById: async id => {
+  getById: async (id) => {
     return await knex('permissions').where({ id }).first();
   },
 
-  getByUser: async userId => {
-    return await knex('permissions').where({ user_id: userId }).orderBy('created_at', 'desc');
+  getByUser: async (userId) => {
+    return await knex('permissions')
+      .where({ user_id: userId })
+      .orderBy('created_at', 'desc');
   },
 
   create: async (userId, data) => {
@@ -25,6 +27,7 @@ const PermissionService = {
       .insert({
         user_id: userId,
         reason: data.reason,
+        duration: data.duration ?? null,
         start_time: data.start_time,
         end_time: data.end_time,
         status: 'waiting',
@@ -37,13 +40,13 @@ const PermissionService = {
       .where({ id })
       .update({
         status,
-        updated_at: knex.fn.now()
+        updated_at: knex.fn.now(),
       })
       .returning('*');
     return updated;
   },
 
-  delete: async id => {
+  delete: async (id) => {
     return await knex('permissions').where({ id }).del();
   },
 
@@ -52,9 +55,9 @@ const PermissionService = {
     return await knex('permissions')
       .where({ user_id: userId, status: 'accepted' })
       .where('start_time', '<=', now) // Sudah masuk waktu boleh keluar
-      .where('end_time', '>=', now)   // Belum melewati batas kembali
+      .where('end_time', '>=', now) // Belum melewati batas kembali
       .first();
-  }
+  },
 };
 
 module.exports = PermissionService;
