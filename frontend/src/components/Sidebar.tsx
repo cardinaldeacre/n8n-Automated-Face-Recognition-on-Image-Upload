@@ -25,16 +25,20 @@ export default function Sidebar({ current, role }: Props) {
       <h2>📜 Licensing Portal</h2>
 
       <nav>
-        <a
-          className={current === 'student' ? 'active' : ''}
-          onClick={goStudent}
-        >
-          Student Dashboard
-        </a>
+        {current === 'student' && (
+          <a
+            className={current === 'student' ? 'active' : ''}
+            onClick={goStudent}
+          >
+            Student Dashboard
+          </a>
+        )}
 
-        <a className={current === 'admin' ? 'active' : ''} onClick={goAdmin}>
-          Admin Dashboard
-        </a>
+        {current === 'admin' && (
+          <a className={current === 'admin' ? 'active' : ''} onClick={goAdmin}>
+            Admin Dashboard
+          </a>
+        )}
       </nav>
     </div>
   );
