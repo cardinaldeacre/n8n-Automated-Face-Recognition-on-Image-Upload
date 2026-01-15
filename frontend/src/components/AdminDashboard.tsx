@@ -17,18 +17,10 @@ export default function AdminDashboard() {
   const { events, setEvents } = useOutletContext<DashboardOutletContext>();
 
   const [permissions, setPermissions] = useState<Permissions[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const [eventForm, setEventForm] = useState({ name: '', details: '' });
-  const [permissionForm, setPermissionForm] = useState({
-    nama: '',
-    nim: '',
-    alasan: '',
-    prodi: '',
-    semester: '',
-    tanggal_keluar: '',
-  });
 
   const submitEvent = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,20 +29,6 @@ export default function AdminDashboard() {
     setEventForm({ name: '', details: '' });
 
     alert('Event published!');
-  };
-
-  const submitPermission = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    alert('Perizinan mahasiswa berhasil dibuat!');
-    setPermissionForm({
-      nama: '',
-      nim: '',
-      alasan: '',
-      prodi: '',
-      semester: '',
-      tanggal_keluar: '',
-    });
   };
 
   async function load() {
