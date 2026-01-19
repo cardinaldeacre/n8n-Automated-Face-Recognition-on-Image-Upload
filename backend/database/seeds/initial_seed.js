@@ -6,10 +6,10 @@ const bcrypt = require('bcrypt');
  */
 exports.seed = async function (knex) {
   // Hapus data lama agar tidak duplikat saat seeding ulang (Opsional)
-  // await knex('users').whereIn('role', ['student', 'admin']).del();
+  await knex('users').whereIn('role', ['student', 'admin']).del();
 
-  const adminPassword = await bcrypt.hash('admin123', 10);
-  const studentPassword = await bcrypt.hash('siswa123', 10); // Password default mahasiswa
+  const adminPassword = await bcrypt.hash('bismillah', 10);
+  const studentPassword = await bcrypt.hash('bismillah', 10); // Password default mahasiswa
 
   const students = [
     { nim: '442023611001', nama: 'ahmad mukhlis farhan' },
@@ -29,6 +29,7 @@ exports.seed = async function (knex) {
     { nim: '442023611099', nama: 'atha fatur' },
     { nim: '442023611103', nama: 'sukma jati' },
     { nim: '442023611104', nama: 'sabri mutiur' },
+    { nim: '442023611123', nama: 'bahlil dahlia' },
   ];
 
   // Menyiapkan data untuk insert
