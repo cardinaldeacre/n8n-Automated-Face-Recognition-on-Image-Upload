@@ -29,7 +29,7 @@ exports.seed = async function (knex) {
     { nim: '442023611099', nama: 'atha fatur' },
     { nim: '442023611103', nama: 'sukma jati' },
     { nim: '442023611104', nama: 'sabri mutiur' },
-    { nim: '442023611123', nama: 'bahlil dahlia' },
+    { nim: '442023611123', nama: 'bahlil lahadalia' },
   ];
 
   // Menyiapkan data untuk insert
