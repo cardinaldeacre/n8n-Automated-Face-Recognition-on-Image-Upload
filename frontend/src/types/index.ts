@@ -24,9 +24,9 @@ export interface LoginResponse {
 
 export interface RegisterPayload {
     nim: string;
-    name: string;
+    nama: string;
     prodi: string;
     semester: number;
     password: string;
-    photo?: File[];
+    photos?: File[];
 }
